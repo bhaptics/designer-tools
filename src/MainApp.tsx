@@ -8,8 +8,6 @@ type State = {
   suffix: string;
 }
 
-const zip = new JSZip();
-
 const mapping = [
   3, 2, 1, 0,
   7, 6, 5, 4,
@@ -24,7 +22,6 @@ const mirrorVestIndex = (index: number) => {
 
 const mirrorVest = (effect: any) => {
   const dotFeedback = effect.dotMode.feedback.map((f: any) => {
-      console.log(f.pointList);
       if (!f.pointList) {
         return f;
       }
@@ -184,6 +181,11 @@ export default () => {
         <button
           className={'border rounded mx-2 px-4 py-2 bg-blue-500'}
           onClick={async () => {
+            if (state.files.length === 0) {
+              return;
+            }
+
+            const zip = new JSZip();
             state.files.forEach(m => {
               zip.file(m.fileName.replace(".tact", "") + state.suffix + ".tact", m.content);
             });
@@ -191,22 +193,19 @@ export default () => {
             const file = new File([ars], 'Mirror.zip', {type: "application/zip;charset=utf-8"});
             saveAs(file);
           }}>
-          Save All
+          Download converted files
         </button>
       </div>
 
       <div>
         {state.files.map((f => {
           return (
-            <div key={f.fileName}>
+            <div key={f.fileName} className={'my-2 border-b rounded'}>
               <div>
                 {f.fileName}
                 <label className={'mx-2'}>
                   {f.type}
                 </label>
-              </div>
-              <div className={'border rounded'}>
-                {f.content}
               </div>
             </div>
           )
